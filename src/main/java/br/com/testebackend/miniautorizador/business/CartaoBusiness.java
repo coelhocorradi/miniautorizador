@@ -49,6 +49,8 @@ public class CartaoBusiness {
 					throw new CartaoException("Erro na criação do cartão!", EStatusCartao.NAO_PODE_SER_CRIADO);
 				}
 				result = EStatusCartao.CRIADO;
+			} else {
+				result = EStatusCartao.NAO_PODE_SER_CRIADO;
 			}
 		} catch (CartaoException e) {
 			e.printStackTrace();
@@ -89,12 +91,15 @@ public class CartaoBusiness {
 		Double result = null;
 		try {
 			numeroCartao = Cartao.validaNumeroCartao(numeroCartao);
-			senha = Cartao.validaSenha(senha);
+			//senha = Cartao.validaSenha(senha);
 			Cartao cartao = repository.acharPeloNumeroCartao(numeroCartao);
+			/*
 			if (!cartao.getSenha().equals(senha))
 				throw new CartaoException("A senha informada não coincide com a registrada!",
 						EStatusCartao.SENHA_INVALIDA);
-			result = cartao.getSaldo();
+						*/
+			if (cartao != null)
+				result = cartao.getSaldo();
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = null;

@@ -62,12 +62,12 @@ public class Cartao {
 	public static String validaNumeroCartao(String numeroCartao) throws Exception {
 		if (numeroCartao == null)
 			throw new Exception("Número do cartão não pode ser nulo");
-		numeroCartao = numeroCartao.trim();
-		if (numeroCartao.trim().isEmpty())
+		numeroCartao = numeroCartao.trim().replaceAll("\r|\t|\s|\n","");		
+		if (numeroCartao.isEmpty())
 			throw new Exception("Número do cartão não pode ser vazio");
 		if (numeroCartao.length() != 16)
-			throw new Exception("Número do cartão deve ser composta de 16 dígitos!");
-		if (!numeroCartao.matches("/[0-9]{16}/"))
+			throw new Exception("Número do cartão deve ser composto de 16 dígitos!");
+		if (!numeroCartao.matches("[0-9]{16}"))
 			throw new Exception("Número do cartão tem de ser formado apenas por dígitos!");
 		return numeroCartao;
 	}
@@ -75,12 +75,12 @@ public class Cartao {
 	public static String validaSenha(String senha) throws Exception {
 		if (senha == null)
 			throw new Exception("A senha do cartão não pode ser nula!");
-		senha = senha.trim();
+		senha = senha.trim().replaceAll("\r|\t|\s|\n","");
 		if (senha.isEmpty())
 			throw new Exception("A senha do cartão não pode ser vazia!");
 		if (senha.length() < 4 || senha.length() > 6)
 			throw new Exception("A senha do cartão deve ter de 4 a 6 dígtos!");
-		if (!senha.matches("/[0-9]{4,6}/"))
+		if (!senha.matches("[0-9]{4,6}"))
 			throw new Exception("A senha do cartão tem de ser formada apenas por dígitos!");
 		return senha;
 	}
