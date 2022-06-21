@@ -1,5 +1,7 @@
 package br.com.testebackend.miniautorizador.entities;
 
+import java.util.UUID;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,6 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Cartao {
 
 	@Id
+	private UUID idCartao;
+
 	private String numeroCartao;
 
 	private String senha;
@@ -17,14 +21,24 @@ public class Cartao {
 
 	public Cartao() {
 		super();
+		this.idCartao = UUID.randomUUID();
 	}
 
 	public Cartao(String numeroCartao, String senha, Double saldo, boolean ativo) {
 		super();
+		this.idCartao = UUID.randomUUID();
 		this.numeroCartao = numeroCartao;
 		this.senha = senha;
 		this.saldo = saldo;
 		this.ativo = ativo;
+	}
+
+	public UUID getIdCartao() {
+		return idCartao;
+	}
+
+	public void setIdCartao(UUID idCartao) {
+		this.idCartao = idCartao;
 	}
 
 	public String getNumeroCartao() {
@@ -62,7 +76,7 @@ public class Cartao {
 	public static String validaNumeroCartao(String numeroCartao) throws Exception {
 		if (numeroCartao == null)
 			throw new Exception("Número do cartão não pode ser nulo");
-		numeroCartao = numeroCartao.trim().replaceAll("\r|\t|\s|\n","");		
+		numeroCartao = numeroCartao.trim().replaceAll("\r|\t|\s|\n", "");
 		if (numeroCartao.isEmpty())
 			throw new Exception("Número do cartão não pode ser vazio");
 		if (numeroCartao.length() != 16)
@@ -75,7 +89,7 @@ public class Cartao {
 	public static String validaSenha(String senha) throws Exception {
 		if (senha == null)
 			throw new Exception("A senha do cartão não pode ser nula!");
-		senha = senha.trim().replaceAll("\r|\t|\s|\n","");
+		senha = senha.trim().replaceAll("\r|\t|\s|\n", "");
 		if (senha.isEmpty())
 			throw new Exception("A senha do cartão não pode ser vazia!");
 		if (senha.length() < 4 || senha.length() > 6)

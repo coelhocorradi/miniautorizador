@@ -5,9 +5,11 @@ import java.util.UUID;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import br.com.testebackend.miniautorizador.entities.CartaoTransacao;
 
+@Repository
 public interface CartaoTransacaoRepository extends MongoRepository<CartaoTransacao, UUID> {
 
 	@Query(value = "{idTransacao:'?0'}")

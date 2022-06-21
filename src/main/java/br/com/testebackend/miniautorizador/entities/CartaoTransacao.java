@@ -14,7 +14,7 @@ public class CartaoTransacao {
 	@Id
 	private UUID idTransacao;
 
-	private String numeroCartao;
+	private UUID idCartao;
 
 	private Date dataTransacao;
 
@@ -26,24 +26,25 @@ public class CartaoTransacao {
 
 	public CartaoTransacao() {
 		super();
+		this.idTransacao = UUID.randomUUID();
 	}
 
-	public CartaoTransacao(UUID idTransacao, String numeroCartao, Date dataTransacao, Double valorTransacao,
+	public CartaoTransacao(UUID idCartao, Date dataTransacao, Double valorTransacao,
 			EStatusTransacao statusTransacao) {
 		super();
-		this.idTransacao = idTransacao;
-		this.numeroCartao = numeroCartao;
+		this.idTransacao = UUID.randomUUID();
+		this.idCartao = idCartao;
 		this.dataTransacao = dataTransacao;
 		this.valorTransacao = valorTransacao;
 		this.statusTransacao = statusTransacao;
 		this.idTransacaoCanceladoOuExternado = null;
 	}
 
-	public CartaoTransacao(UUID idTransacao, String numeroCartao, Date dataTransacao, Double valorTransacao,
+	public CartaoTransacao(UUID idCartao, Date dataTransacao, Double valorTransacao,
 			EStatusTransacao statusTransacao, UUID idTransacaoCanceladoOuExternado) {
 		super();
-		this.idTransacao = idTransacao;
-		this.numeroCartao = numeroCartao;
+		this.idTransacao = UUID.randomUUID();
+		this.idCartao = idCartao;
 		this.dataTransacao = dataTransacao;
 		this.valorTransacao = valorTransacao;
 		this.statusTransacao = statusTransacao;
@@ -58,12 +59,12 @@ public class CartaoTransacao {
 		this.idTransacao = idTransacao;
 	}
 
-	public String getNumeroCartao() {
-		return numeroCartao;
+	public UUID getIdCartao() {
+		return idCartao;
 	}
 
-	public void setNumeroCartao(String numeroCartao) {
-		this.numeroCartao = numeroCartao;
+	public void setIdCartao(UUID idCartao) {
+		this.idCartao = idCartao;
 	}
 
 	public Date getDataTransacao() {

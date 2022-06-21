@@ -1,7 +1,6 @@
 package br.com.testebackend.miniautorizador.business;
 
 import java.util.Date;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,6 +31,13 @@ public class CartaoBusiness {
 		return cartao != null && cartao.isAtivo();
 	}
 
+	/**
+	 * criar um cartao, verifica número do cartão e senha se válidos antes de salvar
+	 * 
+	 * @param numeroCartao
+	 * @param senha
+	 * @return
+	 */
 	public EStatusCartao criarCartao(String numeroCartao, String senha) {
 		EStatusCartao result = EStatusCartao.UNKNOW;
 		try {
@@ -41,17 +47,14 @@ public class CartaoBusiness {
 				throw new CartaoException("Um cartão com esse número já existe!", EStatusCartao.CARTAO_EXISTE);
 			senha = Cartao.validaSenha(senha);
 			cartao = repository.save(new Cartao(numeroCartao, senha, null, true));
-			if (cartao != null) {
-				CartaoTransacao transacao = CartaoTransacaoRepository.save(new CartaoTransacao(UUID.randomUUID(),
-						cartao.getNumeroCartao(), new Date(), 500.00, EStatusTransacao.CRIADO));
-				if (transacao == null) {
-					repository.delete(cartao);
-					throw new CartaoException("Erro na criação do cartão!", EStatusCartao.NAO_PODE_SER_CRIADO);
-				}
-				result = EStatusCartao.CRIADO;
-			} else {
-				result = EStatusCartao.NAO_PODE_SER_CRIADO;
+			if (cartao == null)
+				throw new CartaoException("Cartão não pode ser criado!", EStatusCartao.NAO_PODE_SER_CRIADO);
+			CartaoTransacao transacao = CartaoTransacaoRepository.save(new CartaoTransacao(cartao.getIdCartao(), new Date(), 500.00, EStatusTransacao.CRIADO));
+			if (transacao == null) {
+				repository.delete(cartao);
+				throw new CartaoException("Erro na criação do cartão!", EStatusCartao.NAO_PODE_SER_CRIADO);
 			}
+			result = EStatusCartao.CRIADO;
 		} catch (CartaoException e) {
 			e.printStackTrace();
 			result = e.getStatusCartao();
@@ -62,6 +65,16 @@ public class CartaoBusiness {
 		return result;
 	}
 
+	/**
+	 * trocar senha do cartao, obrigatório senha antiga e nova senha para
+	 * conferência. verifica número do cartão, senha antiga e senha nova se válidos
+	 * antes de salvar.
+	 * 
+	 * @param numeroCartao
+	 * @param senhaAntiga
+	 * @param senhaNova
+	 * @return
+	 */
 	public EStatusCartao trocarSenhaCartao(String numeroCartao, String senhaAntiga, String senhaNova) {
 		EStatusCartao result = EStatusCartao.UNKNOW;
 		try {
@@ -72,6 +85,9 @@ public class CartaoBusiness {
 				throw new CartaoException("A senha informada não coincide com a registrada!",
 						EStatusCartao.SENHA_INVALIDA);
 			senhaNova = Cartao.validaSenha(senhaNova);
+			if (!cartao.getSenha().equals(senhaNova))
+				throw new CartaoException("A nova senha informada é a mesma senha anterior!",
+						EStatusCartao.SENHA_NAO_ALTERADA);
 			cartao.setSenha(senhaNova);
 			cartao = repository.save(cartao);
 			if (cartao == null)
@@ -87,19 +103,48 @@ public class CartaoBusiness {
 		return result;
 	}
 
+	/**
+	 * Recupera saldo do cartão sem uso de senha. verifica o número do cartão se
+	 * válido antes de recuperar o saldo.
+	 * 
+	 * @param numeroCartao
+	 * @return
+	 */
+	public Double recuperarSaldo(String numeroCartao) {
+		Double result = null;
+		try {
+			numeroCartao = Cartao.validaNumeroCartao(numeroCartao);
+			Cartao cartao = repository.acharPeloNumeroCartao(numeroCartao);
+			if (cartao == null)
+				throw new CartaoException("O cartao informado não foi encontrado!", EStatusCartao.CARTAO_INEXISTENTE);
+			result = cartao.getSaldo();
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = null;
+		}
+		return result;
+	}
+
+	/**
+	 * Recupera saldo do cartão, senha é obrigatória verifca número e senha do
+	 * cartão se válido antes de recuperar o saldo.
+	 * 
+	 * @param numeroCartao
+	 * @param senha
+	 * @return
+	 */
 	public Double recuperarSaldo(String numeroCartao, String senha) {
 		Double result = null;
 		try {
 			numeroCartao = Cartao.validaNumeroCartao(numeroCartao);
-			//senha = Cartao.validaSenha(senha);
 			Cartao cartao = repository.acharPeloNumeroCartao(numeroCartao);
-			/*
+			if (cartao == null)
+				throw new CartaoException("O cartao informado não foi encontrado!", EStatusCartao.CARTAO_INEXISTENTE);
+			senha = Cartao.validaSenha(senha);
 			if (!cartao.getSenha().equals(senha))
 				throw new CartaoException("A senha informada não coincide com a registrada!",
 						EStatusCartao.SENHA_INVALIDA);
-						*/
-			if (cartao != null)
-				result = cartao.getSaldo();
+			result = cartao.getSaldo();
 		} catch (Exception e) {
 			e.printStackTrace();
 			result = null;
