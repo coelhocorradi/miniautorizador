@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-	private static final int BROWSER_CACHE_CONTROL = 604800;
+	//private static final int BROWSER_CACHE_CONTROL = 604800;
 
 	/*
 	 * @Override public void addResourceHandlers(ResourceHandlerRegistry registry) {
